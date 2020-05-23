@@ -1,20 +1,27 @@
 const fs = require("fs");
 const path = require("path");
+const openpgp = require("openpgp"); // use as CommonJS, AMD, ES6 module or via window.openpgp
+// openpgp.initWorker({ path: "openpgp.worker.js" }); // set the relative web worker pat
 
-const encrypt = ({ receiver, msg, openpgp }) => {
+const encrypt = ({ receiver, msg }) => {
   fs.readFile(
     path.join(__dirname, "./contacts.json"),
     "utf8",
     async (err, fd) => {
       const c = JSON.parse(fd);
       if (c[receiver]) {
+        console.log(c);
         const publicKeyArmored = `-----BEGIN PGP PUBLIC KEY BLOCK-----\r\n\r\n${c[receiver]}\r\n-----END PGP PUBLIC KEY BLOCK-----`;
         const keys = await openpgp.key.readArmored(publicKeyArmored);
-        const { data: encrypted } = await openpgp.encrypt({
-          message: openpgp.message.fromText(msg), // input as Message object
-          publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys, // for encryption
-        });
-        console.log(`Message:\n\n${encrypted}`);
+        try {
+          const { data: encrypted } = await openpgp.encrypt({
+            message: openpgp.message.fromText(msg), // input as Message object
+            publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys, // for encryption
+          });
+          console.log(`Message:\n\n${encrypted}`);
+        } catch (e) {
+          console.log(e);
+        }
       } else {
         console.log("contact does not exist");
       }

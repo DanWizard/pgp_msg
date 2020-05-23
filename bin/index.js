@@ -15,7 +15,7 @@ const deleteKeys = require("./deleteKeys");
 const seePub = require("./seePub");
 const inquirer = require("inquirer");
 const openpgp = require("openpgp"); // use as CommonJS, AMD, ES6 module or via window.openpgp
-openpgp.initWorker({ path: "openpgp.worker.js" }); // set the relative web worker path
+// openpgp.initWorker({ path: "openpgp.worker.js" }); // set the relative web worker path
 const vorpal = require("vorpal")();
 const shell = require("shelljs");
 const fs = require("fs");
